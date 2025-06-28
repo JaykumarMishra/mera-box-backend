@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MERA BOX</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #ffcc00;
+      text-shadow: 2px 2px #000;
+    }
+    input[type="text"], select {
+      width: 90%;
+      max-width: 500px;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 1rem;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background-color: #ffcc00;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background-color: #ffaa00;
+    }
+    iframe {
+      margin-top: 1rem;
+      width: 90%;
+      max-width: 600px;
+      height: 300px;
+      display: none;
+    }
+    label {
+      margin: 1rem 0;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>MERA BOX</h1>
+
+  <!-- ✅ Input Box -->
+  <input type="text" id="videoUrl" placeholder="Paste your video link here..." />
+
+  <!-- ✅ Buttons -->
+  <button onclick="playVideo()">Play Online</button>
+
+  <select id="formatSelect">
+    <option value="mp4">MP4</option>
+    <option value="3gp">3GP</option>
+    <option value="720">720p</option>
+    <option value="full hd">Full HD</option>
+    <option value="4k">4K</option>
+  </select>
+  <button onclick="downloadVideo()">Download</button>
+
+  <!-- ✅ Premium Toggle -->
+  <div>
+    <label>
+      <input type="checkbox" id="premiumToggle" onchange="togglePremium()" />
+      Premium Mode (No Ads)
+    </label>
+  </div>
+
+  <!-- ✅ Price Text -->
+  <p id="priceText" style="margin-top: 10px; font-weight: bold;"></p>
+
+  <!-- ✅ Subscribe -->
+  <button onclick="subscribePremium()">Subscribe Now</button>
+
+  <!-- ✅ Ad Container -->
+  <div id="ad-container" style="margin-top: 20px;">Ad will appear here...</div>
+
+  <!-- ✅ Video Player -->
+  <iframe id="videoPlayer" allowfullscreen></iframe>
+
+  <!-- ✅ JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
