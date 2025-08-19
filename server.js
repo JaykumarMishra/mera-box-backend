@@ -1,56 +1,56 @@
 import express from "express";
 import cors from "cors";
-import ytdl from "@distube/ytdl-core";
-import dotenv from "dotenv";
-
-dotenv.config(); // Load environment variables
+import ytdl from "ytdl-core";
 
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// ✅ Test route
+// Test Route
 app.get("/", (req, res) => {
-  res.send("✅ MeraBox Backend is Running...");
+  res.send("✅ Mera Box Backend is Running...");
 });
 
-// ✅ YouTube Video Info Route
-app.get("/video-info", async (req, res) => {
+// Video Download Route
+app.post("/download", async (req, res) => {
   try {
-    const { url } = req.query;
-    if (!url) return res.status(400).json({ error: "Video URL required" });
+    const { url, format } = req.body;
 
+    if (!url) {
+      return res.status(400).json({ error: "❌ URL is required" });
+    }
+
+    // Validate URL
+    if (!ytdl.validateURL(url)) {
+      return res.status(400).json({ error: "❌ Invalid YouTube URL" });
+    }
+
+    // Get video info
     const info = await ytdl.getInfo(url);
 
-    res.json({
-      title: info.videoDetails.title,
-      thumbnail: info.videoDetails.thumbnails[0].url,
-      length: info.videoDetails.lengthSeconds,
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch video info", details: error.message });
+    // Choose format (mp4 or mp3)
+    let downloadFormat;
+    if (format === "mp3") {
+      downloadFormat = { filter: "audioonly" };
+      res.header("Content-Disposition", `attachment; filename="${info.videoDetails.title}.mp3"`);
+    } else {
+      downloadFormat = { filter: "audioandvideo", quality: "highest" };
+      res.header("Content-Disposition", `attachment; filename="${info.videoDetails.title}.mp4"`);
+    }
+
+    // Stream the video/audio
+    ytdl(url, downloadFormat).pipe(res);
+
+  } catch (err) {
+    console.error("❌ Error in /download:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// ✅ YouTube Download Route
-app.get("/download", async (req, res) => {
-  try {
-    const { url } = req.query;
-    if (!url) return res.status(400).json({ error: "Video URL required" });
-
-    const info = await ytdl.getInfo(url);
-    const title = info.videoDetails.title.replace(/[^a-zA-Z0-9 ]/g, "");
-
-    res.header("Content-Disposition", `attachment; filename="${title}.mp4"`);
-
-    ytdl(url, { format: "mp4" }).pipe(res);
-  } catch (error) {
-    res.status(500).json({ error: "Download failed", details: error.message });
-  }
-});
-
-// ✅ Server listen on PORT (from env or fallback 10000)
+// Port setup
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });
